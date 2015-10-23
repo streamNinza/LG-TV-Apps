@@ -1,0 +1,188 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>LG sample Video</title>
+
+<script src="webOSjs-0.1.0/webOS.js" charset="utf-8"></script>
+
+<script type="text/javascript">
+	function PlayHLSVideo() {
+		
+		var options = {};
+		options.mediaTransportType = "HLS";
+
+		var mediaOption = escape(JSON.stringify(options));
+		var source = document.createElement("source");
+		// sample HLS 
+		var dataURL = "http://qthttp.apple.com.edgesuite.net/1010qwoeiuryfg/sl.m3u8";
+		
+		source.setAttribute('src', dataURL);
+		source.setAttribute('type', 'video/mp4;mediaOption=' + mediaOption);
+		var video = document.getElementById('videoElement');
+		video.appendChild(source);
+		video.play();
+		
+	}
+
+	function playDASHVideo() {
+	
+		var options = {};
+		options.mediaTransportType = "MPEG-DASH";
+
+		var mediaOption = escape(JSON.stringify(options));
+		var source = document.createElement("source");
+		// sample HLS 
+		var dataURL = "http://wams.edgesuite.net/media/SintelTrailer_Smooth_from_WAME_CENC/CENC/sintel_trailer-1080p.ism/manifest(format=mpd-time-csf)";
+		
+		source.setAttribute('src', dataURL);
+		source.setAttribute('type', 'video/mp4;mediaOption=' + mediaOption);
+		var video = document.getElementById('videoElement');
+		video.appendChild(source);
+		video.play();
+		
+	}
+	
+	function videoPlay(streamURL , div) {
+		
+		var streamType;
+		
+		if(s.indexOf(".m3u8") > -1){
+			streamType="HLS";
+		}else if(s.indexOf(".mpd") > -1) {
+			streamType="MPEG-DASH";
+		}else{
+			streamType="";
+		}		
+		
+		var options = {};
+	
+		options.mediaTransportType = streamType;
+		
+		var mediaOption = escape(JSON.stringify(options));
+		var source = document.createElement("source");
+		
+	
+		var streamSource = streamURL;
+		
+		source.setAttribute('src', streamSource);
+		source.setAttribute('type', 'video/mp4;mediaOption=' + mediaOption);
+		
+		var video = document.getElementById(div);
+		video.appendChild(source);
+		
+		video.play();
+		
+	}
+	
+	
+	
+	
+	
+</script>
+
+<script type="text/javascript">
+	function getCaption() {
+		document.getElementById("getcc").innerHTML = "";
+		webOS.service
+				.request(
+						"luna://com.webos.settingsservice",
+						{
+							method : "getSystemSettings",
+							parameters : {
+								category : "caption",
+								keys : [ "captionEnable" ]
+							},
+							onSuccess : function(resp) {
+								document.getElementById("getcc").innerHTML = "Close Caption is : "
+										+ resp.settings.captionEnable;
+							},
+							onFailure : function(resp) {
+								document.getElementById("getcc").innerHTML = "Fail: "
+										+ JSON.stringify(resp);
+							}
+						});
+	}
+
+	function setCaption(capt) {
+		document.getElementById("setcc").innerHTML = "";
+		webOS.service
+				.request(
+						"luna://com.webos.settingsservice",
+						{
+							method : "setSystemSettings",
+							parameters : {
+								category : "caption",
+								settings : {
+									"captionEnable" : capt
+								}
+							},
+							onSuccess : function(resp) {
+								document.getElementById("setcc").innerHTML = "Set caption Result: "
+										+ JSON.stringify(resp);
+							},
+							onFailure : function(resp) {
+								document.getElementById("setcc").innerHTML = "Fail: "
+										+ JSON.stringify(resp);
+							}
+						});
+	}
+</script>
+
+<script type="text/javascript">
+	function getNetworkStatus() {
+
+		var networkstatus, networkType = "NOT CONNECTED";
+
+		document.getElementById("networkStatus").innerHTML = JSON
+				.stringify(networkType);
+
+		webOS.service.request("luna://com.webos.service.connectionmanager", {
+			method : "getStatus",
+			onComplete : function(apiResponse) {
+				if (apiResponse.returnValue) {
+					networkstatus = apiResponse;
+				} else {
+					networkstatus = null;
+				}
+			}
+		});
+
+		if (networkstatus) {
+			if (networkstatus.wired.state == "connected") {
+				networkType = "WIRED"
+				document.getElementById("networkStatus").innerHTML ="Network Status : "
+					+  JSON.stringify(networkType);
+			} else if (networkstatus.wifi.state == "connected") {
+				networkType = "WIFI";
+				document.getElementById("networkStatus").innerHTML = "Network Status : "
+					+ JSON.stringify(networkType);
+			}
+		}
+	}
+</script>
+
+</head>
+<body>
+
+	<div id="videoContainer">
+		<video id="videoElement" width = "480" height = "270"></video>
+		<div>
+			<div style="text-align: center">
+				    <button onclick="PlayHLSVideo()">HLS PLAY<button>
+						<button onclick="playDASHVideo()">DASH PLAY</button>
+	
+						<button onclick="getCaption()">Show Caption</button>
+						<button onclick="setCaption('off')">Disable Caption</button>
+						<button onclick="setCaption('on')">Enable Caption</button>
+						<button onclick="getNetworkStatus()">Show Network Status</button>
+
+						<textarea id="getcc"
+							style="border: 5px solid red; width:200px; height: 100px;"></textarea>
+						<textarea id="setcc"
+							style="border: 5px solid red; width:200px; height: 100px;"></textarea>
+						<textarea id="networkStatus"
+							style="border: 5px solid red; width: 200px; height:100px;"></textarea>
+			</div>
+</body>
+</html>
