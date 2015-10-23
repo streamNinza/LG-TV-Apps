@@ -14,10 +14,10 @@
 
 		var mediaOption = escape(JSON.stringify(options));
 		var source = document.createElement("source");
-		// sample HLS 
-		var dataURL = "http://qthttp.apple.com.edgesuite.net/1010qwoeiuryfg/sl.m3u8";
+	
+		var streamSource = "http://qthttp.apple.com.edgesuite.net/1010qwoeiuryfg/sl.m3u8";
 		
-		source.setAttribute('src', dataURL);
+		source.setAttribute('src', streamSource);
 		source.setAttribute('type', 'video/mp4;mediaOption=' + mediaOption);
 		var video = document.getElementById('videoElement');
 		video.appendChild(source);
@@ -32,10 +32,10 @@
 
 		var mediaOption = escape(JSON.stringify(options));
 		var source = document.createElement("source");
-		// sample HLS 
-		var dataURL = "http://wams.edgesuite.net/media/SintelTrailer_Smooth_from_WAME_CENC/CENC/sintel_trailer-1080p.ism/manifest(format=mpd-time-csf)";
+	
+		var streamSource = "http://wams.edgesuite.net/media/SintelTrailer_Smooth_from_WAME_CENC/CENC/sintel_trailer-1080p.ism/manifest(format=mpd-time-csf)";
 		
-		source.setAttribute('src', dataURL);
+		source.setAttribute('src', streamSource);
 		source.setAttribute('type', 'video/mp4;mediaOption=' + mediaOption);
 		var video = document.getElementById('videoElement');
 		video.appendChild(source);
@@ -74,11 +74,7 @@
 		video.play();
 		
 	}
-	
-	
-	
-	
-	
+
 </script>
 
 <script type="text/javascript">
